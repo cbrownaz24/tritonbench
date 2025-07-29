@@ -64,6 +64,11 @@ if is_fbcode():
 else:
     HAS_HAMMER = False
 
+# Force TF32
+torch.backends.cuda.matmul.allow_tf32 = True
+torch.backends.cudnn.allow_tf32 = True
+
+
 BUILDIN_SHAPES = [
     (256, 256, 256, None),
     (384, 384, 384, None),
@@ -508,6 +513,7 @@ class Operator(BenchmarkOperator):
                 )
                 a = a.as_strided(size=[m, k], stride=strides[0])
                 w = w.as_strided(size=[k, n], stride=strides[1])
+
             else:
                 a = self._scaled_randn(
                     (m, k), scale=k, device=self.device, dtype=self.dtype
